@@ -1,3 +1,4 @@
+
 apiVersion: core.oam.dev/v1alpha2
 kind: WorkloadDefinition
 metadata:
@@ -11,29 +12,34 @@ spec:
   extension:
     template: |
       #Template: {
-      	apiVersion: "apps/v1"
-      	kind:       "Deployment"
-      	metadata: name: deployment.name
-      	spec: {
-      		containers: [{
-      			image: deployment.image
-      			name:  deployment.name
-      			env:   deployment.env
-      			ports: [{
-      				containerPort: deployment.port
-      				protocol:      "TCP"
-      				name:          "default"
-      			}]
-      		}]
-      	}
+        apiVersion: "apps/v1"
+        kind:       "Deployment"
+        metadata: name: deployment.name
+        spec: {
+          selector: matchLabels: app: deployment.name
+          template: {
+            metadata: labels: app: deployment.name
+            spec: {
+              containers: [{
+                image: deployment.image
+                name:  deployment.name
+                env:   deployment.env
+                ports: [{
+                  containerPort: deployment.port
+                  protocol:      "TCP"
+                  name:          "default"
+                }]
+              }]
+            }
+          }
+        }
       }
       deployment: {
-      	name:  string
-      	image: string
-      	port:  *8080 | int
-      	env: [...{
-      		name:  string
-      		value: string
-      	}]
+        name:  string
+        image: string
+        port:  *8080 | int
+        env: [...{
+          name:  string
+          value: string
+        }]
       }
-
